@@ -36,7 +36,7 @@ public class Player : MonoBehaviour
 
         // Set the raycast to be slightly beneath the player's feet
         playerHeight = GetComponent<CapsuleCollider>().height * transform.localScale.y;
-        raycastDistance = (playerHeight / 2) + 0.2f;
+        raycastDistance = 2f;
 
         // Hides the mouse
         Cursor.lockState = CursorLockMode.Locked;
@@ -81,15 +81,15 @@ public class Player : MonoBehaviour
         Vector3 targetVelocity = movement * MoveSpeed;
 
         // Apply movement to the Rigidbody
-        Vector3 velocity = rb.velocity;
+        Vector3 velocity = rb.linearVelocity;
         velocity.x = targetVelocity.x;
         velocity.z = targetVelocity.z;
-        rb.velocity = velocity;
+        rb.linearVelocity = velocity;
 
         // If we aren't moving and are on the ground, stop velocity so we don't slide
         if (isGrounded && moveHorizontal == 0 && moveForward == 0)
         {
-            rb.velocity = new Vector3(0, rb.velocity.y, 0);
+            rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
         }
     }
 
@@ -108,20 +108,20 @@ public class Player : MonoBehaviour
     {
         isGrounded = false;
         groundCheckTimer = groundCheckDelay;
-        rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z); // Initial burst for the jump
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z); // Initial burst for the jump
     }
 
     void ApplyJumpPhysics()
     {
-        if (rb.velocity.y < 0) 
+        if (rb.linearVelocity.y < 0) 
         {
             // Falling: Apply fall multiplier to make descent faster
-            rb.velocity += Vector3.up * Physics.gravity.y * fallMultiplier * Time.fixedDeltaTime;
+            rb.linearVelocity += Vector3.up * Physics.gravity.y * fallMultiplier * Time.fixedDeltaTime;
         } // Rising
-        else if (rb.velocity.y > 0)
+        else if (rb.linearVelocity.y > 0)
         {
             // Rising: Change multiplier to make player reach peak of jump faster
-            rb.velocity += Vector3.up * Physics.gravity.y * ascendMultiplier  * Time.fixedDeltaTime;
+            rb.linearVelocity += Vector3.up * Physics.gravity.y * ascendMultiplier  * Time.fixedDeltaTime;
         }
     }
 }
